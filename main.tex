@@ -11,6 +11,7 @@
 \usepackage{array}
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{tabularx}
 \usepackage{url}
 \usepackage{hyperref}
 
@@ -128,7 +129,8 @@ As highlighted in Table~\ref{tab:comp}, no existing personal safety framework un
 \caption{Comparison of Personal Safety Architectures and SheGuard}
 \label{tab:comp}
 \centering
-\begin{tabular}{p{2.2cm}p{2.8cm}p{2.8cm}p{2.8cm}p{2.8cm}p{2.5cm}}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Architecture / System} & \textbf{Sensing Modality} & \textbf{Network Dependency} & \textbf{Fusion Strategy} & \textbf{Evidence Integrity} & \textbf{LLM / AI Layer} \\
 \midrule
@@ -137,7 +139,7 @@ Single-Channel Audio & Scream or Keyword & Cloud API & Single Model Threshold & 
 Wearable Fall Detectors & Accelerometer / Gyro & Paired Phone Cellular & Heuristic Rule & Local Database & None \\
 \textbf{SheGuard (This Work)} & \textbf{Multimodal} (Acoustic + Keyword + Motion) & \textbf{Layered Offline} (BLE/Wi-Fi Direct P2P + Direct SMS) & \textbf{Deterministic Boolean Fusion} ($K \lor [A \land M]$) + State Machine & \textbf{Cryptographic} (AES-256-GCM, Keystore, SHA-256 Merkle Tree) & \textbf{Bounded LLM} (Strict Human-in-the-Loop FIR/Timeline) \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table*}
 
 \section{System Architecture and Operational Boundaries}
@@ -175,20 +177,21 @@ Transitions between operational states are managed by an auditable state machine
 \caption{Incident State Machine Transitions}
 \label{tab:states}
 \centering
-\begin{tabular}{lll}
+\small
+\begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.3cm}@{}}
 \toprule
 \textbf{Current State} & \textbf{Event / Condition} & \textbf{Next State} \\
 \midrule
 \texttt{IDLE} & Safety Monitoring Start & \texttt{MONITORING} \\
-\texttt{MONITORING} & Single Anomaly Detected & \texttt{SUSPICIOUS\_SIGNAL} \\
-\texttt{SUSPICIOUS\_SIGNAL} & Fusion Rule~\eqref{eq:fusion} Satisfied & \texttt{CANDIDATE\_INCIDENT} \\
-\texttt{CANDIDATE\_INCIDENT} & State Machine Evaluation & \texttt{PENDING\_CONFIRMATION} \\
-\texttt{PENDING\_CONFIRMATION} & User Cancel (Valid PIN) & \texttt{CANCELLED} \\
-\texttt{PENDING\_CONFIRMATION} & 6-Second Timeout Expired & \texttt{ACTIVE\_INCIDENT} \\
-\texttt{ACTIVE\_INCIDENT} & P2P / SMS Escalation & \texttt{ESCALATED} \\
-\texttt{ESCALATED} & Evidence Sealing Complete & \texttt{RESOLVED\_SEALED} \\
+\texttt{MONITORING} & Single Anomaly Detected & \texttt{SUSPICIOUS\_}\allowbreak\texttt{SIGNAL} \\
+\texttt{SUSPICIOUS\_}\allowbreak\texttt{SIGNAL} & Fusion Rule~\eqref{eq:fusion} Satisfied & \texttt{CANDIDATE\_}\allowbreak\texttt{INCIDENT} \\
+\texttt{CANDIDATE\_}\allowbreak\texttt{INCIDENT} & State Machine Evaluation & \texttt{PENDING\_}\allowbreak\texttt{CONFIRMATION} \\
+\texttt{PENDING\_}\allowbreak\texttt{CONFIRMATION} & User Cancel (Valid PIN) & \texttt{CANCELLED} \\
+\texttt{PENDING\_}\allowbreak\texttt{CONFIRMATION} & 6-Second Timeout Expired & \texttt{ACTIVE\_}\allowbreak\texttt{INCIDENT} \\
+\texttt{ACTIVE\_}\allowbreak\texttt{INCIDENT} & P2P / SMS Escalation & \texttt{ESCALATED} \\
+\texttt{ESCALATED} & Evidence Sealing Complete & \texttt{RESOLVED\_}\allowbreak\texttt{SEALED} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \begin{figure*}[htbp]
@@ -295,7 +298,8 @@ The SheGuard prototype implementation on Android 14 was verified through compreh
 \caption{Implementation Verification Results}
 \label{tab:verification}
 \centering
-\begin{tabular}{p{2.3cm}p{3.2cm}l}
+\small
+\begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}p{2.1cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{1.4cm}@{}}
 \toprule
 \textbf{Subsystem} & \textbf{Verification Target} & \textbf{Outcome} \\
 \midrule
@@ -311,7 +315,7 @@ Merkle Integrity & Hash tree generation \& tamper detection & Verified \\
 Manifest Signing & ECDSA signature generation / check & Verified \\
 AI Assistance & FIR drafting with mandatory disclaimer & Verified \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Resource Measurements}
@@ -324,7 +328,8 @@ To quantify the individual contribution of each sensing modality, an analytical 
 \caption{Multimodal Sensing Ablation Study Configurations}
 \label{tab:ablation}
 \centering
-\begin{tabular}{c>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}p{2.9cm}}
+\small
+\begin{tabularx}{\columnwidth}{@{}>{\centering\arraybackslash}p{0.8cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Config} & \textbf{Enabled Decision Inputs} & \textbf{Evaluation Focus} \\
 \midrule
@@ -335,7 +340,7 @@ D & Unsynchronized Acoustic + Motion & Unaligned signal false alarm rate \\
 E & Synchronized Acoustic + Motion ($\Delta t_{\mathrm{sync}}$) & Coincident event precision \\
 \textbf{F} & \textbf{Complete SheGuard} ($K \lor [A \land M]$) & \textbf{Full system accuracy \& resilience} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \section{Conclusion}
