@@ -59,6 +59,43 @@ The key contributions of this paper are summarized as follows:
     \item A prototype implementation on Android 14 accompanied by a rigorous, reproducible evaluation framework.
 \end{itemize}
 
+% Custom Color Palette Definitions
+\definecolor{topborder}{HTML}{1B5E20}
+\definecolor{topbg}{HTML}{F1F8E9}
+\definecolor{sensborder}{HTML}{0D47A1}
+\definecolor{sensbg}{HTML}{E3F2FD}
+\definecolor{intelborder}{HTML}{1B5E20}
+\definecolor{intelbg}{HTML}{E8F5E9}
+\definecolor{commborder}{HTML}{4A148C}
+\definecolor{commbg}{HTML}{F3E5F5}
+\definecolor{recipborder}{HTML}{311B92}
+\definecolor{recipbg}{HTML}{EDE7F6}
+\definecolor{evidborder}{HTML}{E65100}
+\definecolor{evidbg}{HTML}{FFF3E0}
+\definecolor{backborder}{HTML}{1565C0}
+\definecolor{backbg}{HTML}{E0F7FA}
+\definecolor{aiborder}{HTML}{4A148C}
+\definecolor{aibg}{HTML}{F3E5F5}
+\definecolor{stredborder}{HTML}{C62828}
+\definecolor{stredbg}{HTML}{FFEBEE}
+
+% Lightweight Icon Definitions
+\newcommand{\faMicrophone}{$\mathbf{\cdot}$\,\textbf{[Mic]}}
+\newcommand{\faFileAlt}{$\mathbf{\cdot}$\,\textbf{[Txt]}}
+\newcommand{\faCompressArrowsAlt}{$\mathbf{\cdot}$\,\textbf{[Mot]}}
+\newcommand{\faProjectDiagram}{$\mathbf{\cdot}$\,\textbf{[Mesh]}}
+\newcommand{\faBroadcastTower}{$\mathbf{\cdot}$\,\textbf{[SMS]}}
+\newcommand{\faUsers}{$\mathbf{\cdot}$\,\textbf{[Users]}}
+\newcommand{\faMobileAlt}{$\mathbf{\cdot}$\,\textbf{[Peer]}}
+\newcommand{\faUserShield}{$\mathbf{\cdot}$\,\textbf{[Help]}}
+\newcommand{\faCamera}{$\mathbf{\cdot}$\,\textbf{[Cam]}}
+\newcommand{\faLock}{$\mathbf{\cdot}$\,\textbf{[Lock]}}
+\newcommand{\faFileContract}{$\mathbf{\cdot}$\,\textbf{[Sign]}}
+\newcommand{\faDatabase}{$\mathbf{\cdot}$\,\textbf{[DB]}}
+\newcommand{\faListUl}{$\mathbf{\cdot}$\,\textbf{[Sum]}}
+\newcommand{\faFileInvoice}{$\mathbf{\cdot}$\,\textbf{[FIR]}}
+\newcommand{\faBalanceScale}{$\mathbf{\cdot}$\,\textbf{[Law]}}
+
 \begin{figure*}[htbp]
 \centering
 \resizebox{\textwidth}{!}{%
@@ -66,136 +103,158 @@ The key contributions of this paper are summarized as follows:
     node distance=0.35cm and 0.45cm,
     font=\sffamily\tiny,
     box/.style={draw, rounded corners=2.5pt, align=center, inner sep=3.5pt, font=\sffamily\tiny},
-    card/.style={draw, rounded corners=2pt, align=left, inner sep=3pt, fill=white, font=\sffamily\tiny},
+    card/.style={draw, rounded corners=2.5pt, align=left, inner sep=3.5pt, fill=white, font=\sffamily\tiny},
+    pipe/.style={draw, rounded corners=2pt, align=center, inner sep=2.5pt, fill=white, font=\sffamily\tiny},
     hdr/.style={font=\sffamily\bfseries\tiny, align=center},
     titlefont/.style={font=\sffamily\bfseries\small},
     sec/.style={draw, rounded corners=4pt, thick, inner sep=5pt},
-    arr/.style={->, >=stealth, line width=0.8pt, color=blue!80!black},
-    darr/.style={->, >=stealth, line width=0.8pt, dashed, color=gray!80!black},
-    carr/.style={->, >=stealth, line width=0.8pt, dotted, color=teal!80!black},
+    arr/.style={->, >=Stealth, line width=0.8pt, color=black},
+    darr/.style={<->, >=Stealth, line width=0.8pt, dashed, color=blue!80!black},
+    carr/.style={->, >=Stealth, line width=0.8pt, dotted, color=gray!80!black},
     lbl/.style={font=\sffamily\tiny\bfseries, fill=white, inner sep=1pt}
 ]
-
-% Define Palette
-\colorlet{sensbg}{blue!5}
-\colorlet{sensborder}{blue!60!black}
-\colorlet{intelbg}{green!5}
-\colorlet{intelborder}{green!60!black}
-\colorlet{commbg}{violet!5}
-\colorlet{commborder}{violet!60!black}
-\colorlet{recipbg}{violet!10}
-\colorlet{recipborder}{violet!70!black}
-\colorlet{evidbg}{orange!5}
-\colorlet{evidborder}{orange!80!black}
-\colorlet{backbg}{blue!10}
-\colorlet{backborder}{blue!80!black}
-\colorlet{aibg}{purple!5}
-\colorlet{aiporder}{purple!80!black}
 
 % =========================================================================
 % TOP OUTER CONTAINER: CORE LOCAL SAFETY PATH
 % =========================================================================
 
-% --- COLUMN 1: SENSING LAYER ---
-\node [card, text width=3.2cm] (audio) {
-    \textbf{Audio Input Processing}\\
-    \textbullet\ Continuous 16\,kHz PCM\\
-    \textbullet\ 10s Ring Buffer
+% --- COLUMN 1: SENSING LAYER (On-device) ---
+\node [card, text width=3.5cm] (box_audio) {
+    \textbf{\faMicrophone\ Audio Input}\\[1.5pt]
+    \textbullet\ AudioRecord\\
+    \textbullet\ 16-kHz mono PCM\\
+    \textbullet\ 100-ms chunks\\
+    \textbullet\ 10-s pre-roll buffer\\
+    \textbullet\ Local processing
 };
 
-\node [card, below=0.25cm of audio, text width=3.2cm] (keyword) {
-    \textbf{Keyword Detection}\\
-    \textbullet\ Configurable Triggers\\
-    \textbullet\ Speech Commands Model
+\node [card, below=0.25cm of box_audio, text width=3.5cm] (box_keyword) {
+    \textbf{\faFileAlt\ Keyword Detection}\\[1.5pt]
+    \textbullet\ TensorFlow Lite Speech Commands\\
+    \textbullet\ Configurable trigger policy\\
+    \textbullet\ Confidence score $P_{\text{keyword}}$\\
+    \textbullet\ Silence / unknown handling
 };
 
-\node [card, below=0.25cm of keyword, text width=3.2cm] (motion) {
-    \textbf{Motion Detection}\\
-    \textbullet\ Accelerometer Sampling\\
-    \textbullet\ Impact \& Fall Anomaly
+\node [card, below=0.25cm of box_keyword, text width=3.5cm] (box_motion) {
+    \textbf{\faCompressArrowsAlt\ Motion Detection}\\[1.5pt]
+    \textbullet\ Android SensorManager\\
+    \textbullet\ \texttt{TYPE\_ACCELEROMETER}\\
+    \textbullet\ \texttt{SENSOR\_DELAY\_GAME} ($\sim 50$\,Hz)\\
+    \textbullet\ Impact threshold: $2.5\,g$
 };
 
 \begin{pgfonlayer}{background}
-\node [sec, draw=sensborder, fill=sensbg, fit={(audio) (keyword) (motion)}, label={[font=\sffamily\bfseries\tiny, text=sensborder, anchor=north]north:\textbf{SENSING LAYER (On-device)}}] (senslayer) {};
+\node [sec, draw=sensborder, fill=sensbg, fit={(box_audio) (box_keyword) (box_motion)}, label={[font=\sffamily\bfseries\tiny, text=sensborder, anchor=north]north:\textbf{SENSING LAYER (On-device)}}] (container_sens) {};
 \end{pgfonlayer}
 
+
 % --- COLUMN 2: ON-DEVICE INTELLIGENCE LAYER ---
-\node [card, right=0.6cm of audio, text width=4.8cm] (preproc) {
-    \textbf{Signal Preprocessing}\\
-    \textbullet\ Noise Reduction \& Spectrogram Feature Slicing
+\node [card, right=0.6cm of box_audio, text width=5.2cm] (box_preproc) {
+    \textbf{Preprocessing \& Feature Extraction}\\[1.5pt]
+    \textbullet\ Audio gating / VAD \quad \textbullet\ RMS energy filtering\\
+    \textbullet\ Temporal buffering \quad \textbullet\ Acoustic feature checks\\
+    \textbullet\ Sensor normalization \quad \textbullet\ Event timestamps
 };
 
-\node [card, below=0.2cm of preproc, text width=4.8cm] (fusion) {
-    \textbf{Signal Fusion Engine}\\
-    Governing Fusion Rule:\\
-    \scalebox{0.82}{$K_t \lor (A_t \ge \theta_A \land M_t' \ge \theta_M \land |t_A - t_M| \le \Delta t_{\mathrm{sync}})$}
+\node [card, below=0.2cm of box_preproc, text width=5.2cm] (box_fusion) {
+    \textbf{Signal Fusion Engine}\\[1.5pt]
+    \textbullet\ Temporal event alignment\\
+    \textbullet\ Configurable thresholds ($\theta_A, \theta_M$)\\
+    \textbullet\ Synchronization window $\Delta t_{\text{sync}}$\\[2pt]
+    \begin{tikzpicture}
+    \node [draw=intelborder, fill=white, rounded corners=2pt, inner sep=2.5pt, text width=4.8cm, align=center] (eq_rule) {
+        \textbf{Governing Fusion Rule (1):}\\[1pt]
+        \scalebox{0.78}{$K_t \lor \left((A_t \ge \theta_A \land M_t \ge \theta_M) \land |t_A - t_M| \le \Delta t_{\text{sync}}\right)$}
+    };
+    \end{tikzpicture}\\[2pt]
+    \begin{tikzpicture}
+    \node [draw=intelborder, fill=intelbg, rounded corners=2pt, inner sep=2pt, text width=4.8cm, align=center] (eq_out) {
+        \textbf{Output:} Fused Distress Condition ($D_t$)
+    };
+    \end{tikzpicture}
 };
 
 % Incident State Machine Nodes inside Column 2
-\node [box, draw=intelborder, fill=white, below=0.2cm of fusion, xshift=-1.8cm, text width=1.1cm] (st_idle) {IDLE};
+\node [box, draw=intelborder, fill=white, below=0.2cm of box_fusion, xshift=-2.0cm, text width=0.9cm] (st_idle) {IDLE};
 \node [box, draw=intelborder, fill=white, right=0.15cm of st_idle, text width=1.3cm] (st_mon) {MONITORING};
-\node [box, draw=intelborder, fill=white, right=0.15cm of st_mon, text width=1.3cm] (st_susp) {SUSPICIOUS};
+\node [box, draw=intelborder, fill=white, right=0.15cm of st_mon, text width=1.3cm] (st_susp) {SUSPICIOUS\\ SIGNAL};
 
-\node [box, draw=intelborder, fill=white, below=0.25cm of st_idle, xshift=0.3cm, text width=1.4cm] (st_cand) {CANDIDATE};
+\node [box, draw=intelborder, fill=white, below=0.25cm of st_idle, xshift=0.4cm, text width=1.4cm] (st_cand) {CANDIDATE\\ INCIDENT};
 
 % Alert / Confirmation Nodes
-\node [box, draw=red!80!black, fill=red!15, right=0.2cm of st_cand, text width=1.8cm] (st_pend) {\textbf{PENDING}\\ \textbf{CONFIRMATION}\\ (6s Timeout)};
+\node [box, draw=stredborder, fill=stredbg, right=0.2cm of st_cand, text width=1.8cm] (st_pend) {\textbf{PENDING}\\ \textbf{CONFIRMATION}\\ (6\,s Timeout)};
 
-\node [box, draw=gray!60, fill=gray!10, below=0.2cm of st_pend, xshift=-1.1cm, text width=1.3cm] (st_canc) {CANCELLED\\ (PIN)};
+\node [box, draw=gray!60, fill=gray!10, below=0.2cm of st_pend, xshift=-1.1cm, text width=1.3cm] (st_canc) {CANCELLED\\ (User PIN)};
 
-\node [box, draw=red!90!black, fill=red!80!black, text=white, right=0.25cm of st_pend, text width=1.3cm] (st_act) {\textbf{ACTIVE}\\ \textbf{INCIDENT}};
+\node [box, draw=stredborder, fill=stredborder, text=white, right=0.25cm of st_pend, text width=1.3cm] (st_act) {\textbf{ACTIVE}\\ \textbf{INCIDENT}};
 
 \node [box, draw=intelborder, fill=white, right=0.2cm of st_act, text width=1.1cm] (st_seal) {SEALED};
 
 \begin{pgfonlayer}{background}
-\node [sec, draw=intelborder, fill=intelbg, fit={(preproc) (fusion) (st_idle) (st_susp) (st_canc) (st_seal)}, label={[font=\sffamily\bfseries\tiny, text=intelborder, anchor=north]north:\textbf{ON-DEVICE INTELLIGENCE LAYER}}] (intellayer) {};
+\node [sec, draw=intelborder, fill=intelbg, fit={(box_preproc) (box_fusion) (st_idle) (st_susp) (st_canc) (st_seal)}, label={[font=\sffamily\bfseries\tiny, text=intelborder, anchor=north]north:\textbf{ON-DEVICE INTELLIGENCE LAYER}}] (container_intel) {};
 \end{pgfonlayer}
 
-% --- COLUMN 3: COMMUNICATION LAYER ---
-\node [card, right=0.6cm of preproc, text width=3.4cm] (nearby) {
-    \textbf{Nearby Connections}\\
-    \textbullet\ \texttt{P2P\_CLUSTER} Strategy\\
-    \textbullet\ BLE \& Wi-Fi Direct Mesh\\
-    \textbullet\ Multi-hop Peer Relay
+
+% --- COLUMN 3: COMMUNICATION LAYER (Offline-first) ---
+\node [card, right=0.6cm of box_preproc, text width=4.0cm] (box_p2p) {
+    \textbf{\faProjectDiagram\ Nearby Connections (P2P\_CLUSTER)}\\[1.5pt]
+    \textbullet\ BLE / Wi-Fi Direct\\
+    \textbullet\ Store-and-Forward Relay\\
+    \textbullet\ Maximum 12 Hops\\
+    \textbullet\ Deduplication: 1000 IDs / 10-min TTL\\
+    \textbullet\ Compact packets: 250--500\,B\\
+    \textbullet\ Full Audio/Video Relay Disabled\\
+    \textbullet\ App-level forwarding above transport
 };
 
-\node [card, below=0.3cm of nearby, text width=3.4cm] (sms) {
-    \textbf{Cellular SMS Fallback}\\
-    \textbullet\ Direct Cellular SMS\\
-    \textbullet\ Encrypted GSM Payload\\
-    \textbullet\ Location Coordinates
+\node [card, below=0.25cm of box_p2p, text width=4.0cm] (box_sms) {
+    \textbf{\faBroadcastTower\ Cellular-only SMS Fallback}\\[1.5pt]
+    \textbullet\ Android SmsManager\\
+    \textbullet\ Triggered after mesh timeout or failure\\
+    \textbullet\ No Internet/data required\\
+    \textbullet\ Cellular service required\\
+    \textbullet\ Compact emergency payload\\
+    \textbullet\ Local persistence if delivery fails\\[1.5pt]
+    \textbf{Note: Requires cellular service.}
 };
 
 \begin{pgfonlayer}{background}
-\node [sec, draw=commborder, fill=commbg, fit={(nearby) (sms)}, label={[font=\sffamily\bfseries\tiny, text=commborder, anchor=north]north:\textbf{COMMUNICATION LAYER (Offline-first)}}] (commlayer) {};
+\node [sec, draw=commborder, fill=commbg, fit={(box_p2p) (box_sms)}, label={[font=\sffamily\bfseries\tiny, text=commborder, anchor=north]north:\textbf{COMMUNICATION LAYER (Offline-first)}}] (container_comm) {};
 \end{pgfonlayer}
 
-% --- COLUMN 4: AUTHORIZED RECIPIENTS ---
-\node [card, right=0.6cm of nearby, text width=3.2cm] (contacts) {
-    \textbf{Notify Circle}\\
-    \textbullet\ Emergency Contacts\\
-    \textbullet\ Nominated Guardians
+
+% --- COLUMN 4: AUTHORIZED RECIPIENTS AND SUPPORT ---
+\node [card, right=0.6cm of box_p2p, text width=3.4cm] (box_notify) {
+    \textbf{\faUsers\ Notify Circle}\\[1.5pt]
+    \textbullet\ Up to 5 trusted contacts\\
+    \textbullet\ Location sharing\\
+    \textbullet\ Delivery status\\
+    \textbullet\ Acknowledgement status
 };
 
-\node [card, below=0.2cm of contacts, text width=3.2cm] (peers) {
-    \textbf{Nearby Devices}\\
-    \textbullet\ SheGuard Mesh Peers\\
-    \textbullet\ Opportunistic Relays
+\node [card, below=0.2cm of box_notify, text width=3.4cm] (box_peers) {
+    \textbf{\faMobileAlt\ Nearby SheGuard Devices}\\[1.5pt]
+    \textbullet\ Opted-in relay nodes\\
+    \textbullet\ Store-and-forward participation\\
+    \textbullet\ No full evidence relay by default
 };
 
-\node [card, below=0.2cm of peers, text width=3.2cm] (authorities) {
-    \textbf{Authorized Support}\\
-    \textbullet\ First Responders\\
-    \textbullet\ Police / Medical
+\node [card, below=0.2cm of box_peers, text width=3.4cm] (box_help) {
+    \textbf{\faUserShield\ Authorized Help Recipients}\\[1.5pt]
+    \textbullet\ Defined recipient category\\
+    \textbullet\ Location \& incident details\\
+    \textbullet\ Delivery status
 };
 
 \begin{pgfonlayer}{background}
-\node [sec, draw=recipborder, fill=recipbg, fit={(contacts) (peers) (authorities)}, label={[font=\sffamily\bfseries\tiny, text=recipborder, anchor=north]north:\textbf{AUTHORIZED RECIPIENTS}}] (reciplayer) {};
+\node [sec, draw=recipborder, fill=recipbg, fit={(box_notify) (box_peers) (box_help)}, label={[font=\sffamily\bfseries\tiny, text=recipborder, anchor=north]north:\textbf{AUTHORIZED RECIPIENTS AND SUPPORT}}] (container_recip) {};
 \end{pgfonlayer}
 
-% TOP CONTAINER BOUNDARY BOX
+
+% TOP OUTER CONTAINER BOUNDARY
 \begin{pgfonlayer}{background}
-\node [draw=green!60!black, fill=green!2!white, rounded corners=6pt, line width=1.2pt, dashed, fit={(senslayer) (intellayer) (commlayer) (reciplayer)}, label={[font=\sffamily\bfseries\small, text=green!50!black, anchor=north]north:\textbf{Core local safety path -- Operates without Internet, backend, or external AI provider}}] (topcontainer) {};
+\node [draw=topborder, fill=topbg, rounded corners=6pt, line width=1.2pt, dashed, fit={(container_sens) (container_intel) (container_comm) (container_recip)}, label={[font=\sffamily\bfseries\small, text=topborder, anchor=north]north:\textbf{Core local safety path -- Operates without Internet, backend, or external AI provider}}] (container_top) {};
 \end{pgfonlayer}
 
 
@@ -203,44 +262,77 @@ The key contributions of this paper are summarized as follows:
 % MIDDLE CONTAINER: EVIDENCE CAPTURE AND SECURITY LAYER
 % =========================================================================
 
-\node [card, below=1.0cm of senslayer.south west, anchor=north west, text width=3.2cm] (ev_cap) {
-    \textbf{Evidence Capture}\\
-    \textbullet\ Audio Pre-roll Ring Buffer\\
-    \textbullet\ GPS Coordinates \& Sensor Logs\\
-    \textbullet\ High-Priority Media Capture
+\node [card, below=1.0cm of container_sens.south west, anchor=north west, text width=3.6cm] (box_ev_cap) {
+    \textbf{\faCamera\ Evidence Capture}\\[1.5pt]
+    \textbullet\ 10-s audio pre-roll\\
+    \textbullet\ Live audio chunks\\
+    \textbullet\ Sensor records\\
+    \textbullet\ Location fixes\\
+    \textbullet\ Timestamps\\
+    \textbullet\ Incident metadata
 };
 
-\node [card, right=0.4cm of ev_cap, text width=3.8cm] (ev_kms) {
-    \textbf{Encryption \& Key Management}\\
-    \textbullet\ AES-256-GCM Payload Encryption\\
-    \textbullet\ Per-Incident DEK Key Hierarchy\\
-    \textbullet\ Android Keystore Wrapped KEK
+\node [card, right=0.4cm of box_ev_cap, text width=4.2cm] (box_ev_kms) {
+    \textbf{\faLock\ Encryption \& Key Management}\\[1.5pt]
+    \textbullet\ AES-256-GCM\\
+    \textbullet\ Unique IV per encrypted chunk\\
+    \textbullet\ Per-incident data key ($K_{\text{DEK}}$)\\
+    \textbullet\ Keystore-backed key wrapping ($K_{\text{KEK}}$)\\
+    \textbullet\ Hardware-backed protection\\[3pt]
+    \begin{tikzpicture}
+    \node [pipe, text width=3.9cm] (p1) {
+        Android Keystore $\rightarrow$ Persistent $K_{\text{KEK}}$\\[1pt]
+        $\xrightarrow{\text{wraps}}$ Per-incident $K_{\text{DEK}}$ $\xrightarrow{\text{encrypts}}$ Evidence
+    };
+    \end{tikzpicture}
 };
 
-\node [card, right=0.4cm of ev_kms, text width=3.8cm] (ev_seal) {
-    \textbf{Integrity \& Sealing}\\
-    \textbullet\ SHA-256 Merkle Tree Hash\\
-    \textbullet\ Root Digest $R_{\mathrm{Merkle}}$ Sealing\\
-    \textbullet\ ECDSA Hardware-Signed Manifest
+\node [card, right=0.4cm of box_ev_kms, text width=4.2cm] (box_ev_seal) {
+    \textbf{\faFileContract\ Integrity \& Sealing}\\[1.5pt]
+    \textbullet\ SHA-256 chunk hashes\\
+    \textbullet\ Binary Merkle tree\\
+    \textbullet\ Final Merkle root\\
+    \textbullet\ Canonical incident manifest\\
+    \textbullet\ Keystore-backed digital signature\\
+    \textbullet\ Verification on export\\[3pt]
+    \begin{tikzpicture}
+    \node [pipe, text width=3.9cm] (p2) {
+        Encrypted Chunks $\rightarrow$ SHA-256 $\rightarrow$ Merkle Tree\\[1pt]
+        $\rightarrow$ Merkle Root $\rightarrow$ Signed Manifest\\[1pt]
+        \textit{Tamper-evident \& cryptographically verifiable}
+    };
+    \end{tikzpicture}
 };
 
-\node [card, right=0.4cm of ev_seal, text width=3.2cm] (ev_store) {
-    \textbf{Local Storage}\\
-    \textbullet\ Encrypted Room SQLite\\
-    \textbullet\ Hardware-Backed Vault\\
-    \textbullet\ App-Private Sandboxing
+\node [card, right=0.4cm of box_ev_seal, text width=3.6cm] (box_ev_store) {
+    \textbf{\faDatabase\ Local Storage}\\[1.5pt]
+    \textbullet\ Room / SQLite\\
+    \textbullet\ Incident records\\
+    \textbullet\ Evidence metadata\\
+    \textbullet\ Audit events\\
+    \textbullet\ Wrapped data keys\\
+    \textbullet\ Pending relay packets\\
+    \textbullet\ Pending escalation status\\[2pt]
+    \textbf{Authoritative local record}
 };
 
 \begin{pgfonlayer}{background}
-\node [sec, draw=evidborder, fill=evidbg, fit={(ev_cap) (ev_kms) (ev_seal) (ev_store)}, label={[font=\sffamily\bfseries\small, text=evidborder, anchor=north]north:\textbf{EVIDENCE CAPTURE AND SECURITY LAYER}}] (evidlayer) {};
+\node [sec, draw=evidborder, fill=evidbg, fit={(box_ev_cap) (box_ev_kms) (box_ev_seal) (box_ev_store)}, label={[font=\sffamily\bfseries\small, text=evidborder, anchor=north]north:\textbf{EVIDENCE CAPTURE AND SECURITY LAYER}}] (container_evid) {};
 \end{pgfonlayer}
 
-% BESIDE EVIDENCE LAYER: OPTIONAL BACKEND
-\node [sec, draw=backborder, fill=backbg, right=0.5cm of evidlayer, text width=2.8cm, minimum height=2.2cm, align=center] (backend) {
-    \textbf{Optional Backend Services}\\[2pt]
-    \textbullet\ Encrypted Cloud Storage\\
-    \textbullet\ Asynchronous Sync\\
-    \textbullet\ WORM Evidence Vault
+
+% BESIDE EVIDENCE LAYER: OPTIONAL BACKEND SERVICES
+\node [sec, draw=backborder, fill=backbg, right=0.5cm of container_evid, text width=3.0cm, minimum height=3.6cm, align=left] (container_backend) {
+    \textbf{OPTIONAL BACKEND SERVICES}\\[2pt]
+    \textit{(Optional; not required for core safety path)}\\[2pt]
+    \textbullet\ FastAPI\\
+    \textbullet\ Authentication / OTP\\
+    \textbullet\ Incident synchronization\\
+    \textbullet\ Notify Circle services\\
+    \textbullet\ Optional integrity anchoring\\
+    \textbullet\ Online AI provider\\
+    \textbullet\ PostgreSQL / Supabase\\
+    \textbullet\ SQLite fallback
 };
 
 
@@ -248,62 +340,65 @@ The key contributions of this paper are summarized as follows:
 % BOTTOM CONTAINER: POST-INCIDENT AI ASSISTANCE
 % =========================================================================
 
-\node [card, below=0.9cm of evidlayer.south west, anchor=north west, text width=4.0cm] (ai_sum) {
-    \textbf{Incident Summarization}\\
-    \textbullet\ Multimodal Timeline Assembly\\
-    \textbullet\ Contextual Log Structuring
+\node [card, below=0.9cm of container_evid.south west, anchor=north west, text width=4.3cm] (box_ai_sum) {
+    \textbf{\faListUl\ Incident Summarization}\\[1.5pt]
+    \textbullet\ Chronological timeline\\
+    \textbullet\ Evidence-aware summary\\
+    \textbullet\ Human-readable reconstruction
 };
 
-\node [card, right=0.5cm of ai_sum, text width=4.0cm] (ai_fir) {
-    \textbf{FIR Drafting}\\
-    \textbullet\ Structured Draft Generation\\
-    \textbullet\ Legal Format Alignment
+\node [card, right=0.5cm of box_ai_sum, text width=4.3cm] (box_ai_fir) {
+    \textbf{\faFileInvoice\ FIR Drafting}\\[1.5pt]
+    \textbullet\ Structured FIR-style draft\\
+    \textbullet\ Uses authorized metadata\\
+    \textbullet\ Human/legal review required
 };
 
-\node [card, right=0.5cm of ai_fir, text width=4.0cm] (ai_leg) {
-    \textbf{Legal / Procedural Info}\\
-    \textbullet\ Contextual Rights Guidance\\
-    \textbullet\ First Responder Orientation
+\node [card, right=0.5cm of box_ai_fir, text width=4.3cm] (box_ai_leg) {
+    \textbf{\faBalanceScale\ Legal / Procedural Info}\\[1.5pt]
+    \textbullet\ Reporting guidance\\
+    \textbullet\ Next steps\\
+    \textbullet\ User-approved context only
 };
 
 % AI Footer Banner
-\node [box, draw=purple!80!black, fill=purple!20, below=0.2cm of ai_fir, text width=13.0cm, xshift=-0.2cm] (ai_footer) {
+\node [box, draw=aiborder, fill=purple!20, below=0.2cm of box_ai_fir, text width=14.0cm, xshift=-0.2cm] (ai_banner) {
     \textbf{AI cannot detect, decide, escalate, capture, seal, or file $\vert$ Not in Emergency Decision Path}
 };
 
 \begin{pgfonlayer}{background}
-\node [sec, draw=aiporder, fill=aibg, fit={(ai_sum) (ai_fir) (ai_leg) (ai_footer)}, label={[font=\sffamily\bfseries\small, text=aiporder, anchor=north]north:\textbf{POST-INCIDENT AI ASSISTANCE (Human-in-the-Loop; non-safety-critical)}}] (ailayer) {};
+\node [sec, draw=aiborder, fill=aibg, fit={(box_ai_sum) (box_ai_fir) (box_ai_leg) (ai_banner)}, label={[font=\sffamily\bfseries\small, text=aiborder, anchor=north]north:\textbf{POST-INCIDENT AI ASSISTANCE (Human-in-the-Loop; non-safety-critical)}}] (container_ai) {};
 \end{pgfonlayer}
 
 
 % =========================================================================
-% BOTTOM RIGHT: ARROW LEGEND
+% BOTTOM RIGHT: LEGEND BOX
 % =========================================================================
 
-\node [box, draw=gray!60, fill=white, right=0.5cm of ailayer, text width=2.8cm, align=left] (legend) {
-    \textbf{Legend:}\\[2pt]
-    \tikz\draw[arr](0,0)--(0.4,0);\, Local Data Flow\\[2pt]
-    \tikz\draw[darr](0,0)--(0.4,0);\, Optional / Network\\[2pt]
-    \tikz\draw[carr](0,0)--(0.4,0);\, Control / Ack Flow
+\node [box, draw=gray!60, fill=white, right=0.5cm of container_ai, text width=3.0cm, align=left] (box_legend) {
+    \textbf{Legend:}\\[3pt]
+    \tikz\draw[arr](0,0)--(0.5,0);\, Local data flow (on device)\\[2pt]
+    \tikz\draw[darr](0,0)--(0.5,0);\, Optional / network flow\\[2pt]
+    \tikz\draw[carr](0,0)--(0.5,0);\, Control / ack / retry flow
 };
 
 
 % =========================================================================
-% CONNECTING ARROWS & FLOWS
+% CONNECTORS AND FLOW ARROWS
 % =========================================================================
 
 % Sensing -> Preprocessing & Fusion
-\draw [arr] (audio.east) -- (preproc.west);
-\draw [arr] (keyword.east) -- (preproc.west);
-\draw [arr] (motion.east) -- (fusion.west);
+\draw [arr] (box_audio.east) -- node[above, lbl] {$A_t$} (box_preproc.west |- box_audio.east);
+\draw [arr] (box_keyword.east) -- node[above, lbl] {$K_t$} (box_preproc.west |- box_keyword.east);
+\draw [arr] (box_motion.east) -- node[above, lbl] {$M_t$} (box_fusion.west |- box_motion.east);
 
 % Preproc -> Fusion
-\draw [arr] (preproc.south) -- (fusion.north);
+\draw [arr] (box_preproc.south) -- (box_fusion.north);
 
 % Fusion -> State Machine
-\draw [arr] (fusion.south) -- ++(0,-0.1) -| (st_idle.north);
+\draw [arr] (box_fusion.south) -- ++(0,-0.1) -| (st_idle.north);
 
-% State Machine Internal Transitions
+% State Machine Transitions
 \draw [arr] (st_idle.east) -- (st_mon.west);
 \draw [arr] (st_mon.east) -- (st_susp.west);
 \draw [arr] (st_susp.south) -- ++(0,-0.15) -| (st_cand.north);
@@ -312,28 +407,31 @@ The key contributions of this paper are summarized as follows:
 \draw [arr] (st_pend.east) -- (st_act.west);
 \draw [arr] (st_act.east) -- (st_seal.west);
 
-% Active Incident -> Comm Layer
-\draw [arr] (st_act.north) -- ++(0,0.4) -| (nearby.west);
-\draw [arr] (st_act.north) -- ++(0,0.4) -| (sms.west);
+% Active Incident -> Communication
+\draw [arr] (st_act.north) -- ++(0,0.4) -| (box_p2p.west);
+\draw [arr] (st_act.north) -- ++(0,0.4) -| (box_sms.west);
 
-% Comm Layer -> Recipients
-\draw [arr] (nearby.east) -- (peers.west);
-\draw [arr] (nearby.east) -- (authorities.west);
-\draw [arr] (sms.east) -- (contacts.west);
+% Communication -> Recipients
+\draw [arr] (box_p2p.east) -- (box_peers.west);
+\draw [arr] (box_p2p.east) -- (box_help.west);
+\draw [arr] (box_sms.east) -- (box_notify.west);
 
 % Active Incident -> Evidence Capture
-\draw [arr] (st_act.south) -- ++(0,-0.5) -| (ev_cap.north);
+\draw [arr] (st_act.south) -- ++(0,-0.5) -| (box_ev_cap.north);
 
 % Evidence Internal Pipeline
-\draw [arr] (ev_cap.east) -- (ev_kms.west);
-\draw [arr] (ev_kms.east) -- (ev_seal.west);
-\draw [arr] (ev_seal.east) -- (ev_store.west);
+\draw [arr] (box_ev_cap.east) -- (box_ev_kms.west);
+\draw [arr] (box_ev_kms.east) -- (box_ev_seal.west);
+\draw [arr] (box_ev_seal.east) -- (box_ev_store.west);
 
-% Evidence -> Backend
-\draw [darr] (ev_store.east) -- (backend.west);
+% Local Storage <-> Optional Backend
+\draw [darr] (box_ev_store.east) -- (container_backend.west |- box_ev_store.east);
 
-% Evidence -> AI Layer
-\draw [carr] (ev_store.south) -- ++(0,-0.4) -| (ai_sum.north);
+% Evidence -> Post-Incident AI
+\draw [darr] (box_ev_store.south) -- ++(0,-0.4) -| (box_ai_sum.north);
+
+% Post-Incident AI <-> Optional Backend
+\draw [darr] (container_ai.east) -- ++(0.3,0) |- (container_backend.south);
 
 \end{tikzpicture}%
 }
