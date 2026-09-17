@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.9.17)  17 SEP 2026 11:00
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.9.17)  17 SEP 2026 11:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -880,39 +880,39 @@ Underfull \hbox (badness 2932) in paragraph at lines 233--234
  []
 
 [4 <./fig2.png (PNG copy)>]
-<fig3.png, id=270, 1683.28876pt x 941.5175pt>
-File: fig3.png Graphic file (type png)
-<use fig3.png>
-Package pdftex.def Info: fig3.png  used on input line 252.
+<fig4.png, id=270, 1683.28876pt x 941.5175pt>
+File: fig4.png Graphic file (type png)
+<use fig4.png>
+Package pdftex.def Info: fig4.png  used on input line 267.
 (pdftex.def)             Requested size: 516.0pt x 288.6206pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 274--275
+Underfull \hbox (badness 10000) in paragraph at lines 275--276
 []\OT1/ptm/m/n/10 The ev-i-dence vault iso-lates en-crypted
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 274--275
+Underfull \hbox (badness 10000) in paragraph at lines 275--276
 \OT1/ptm/m/n/10 pay-loads in-side app-private in-ter-nal stor-age
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 274--275
+Underfull \hbox (badness 10000) in paragraph at lines 275--276
 \OT1/ptm/m/n/10 (\OT1/pcr/m/n/10 /data/user/0/com.sheguard/files/vault\OT1/ptm/
 m/n/10 ).
  []
 
 
-Underfull \hbox (badness 2261) in paragraph at lines 274--275
+Underfull \hbox (badness 2261) in paragraph at lines 275--276
 \OT1/ptm/m/n/10 Nei-ther unau-then-ti-cated apps nor root-compromised adb
  []
 
-<fig4.png, id=271, 1683.28876pt x 941.5175pt>
-File: fig4.png Graphic file (type png)
-<use fig4.png>
-Package pdftex.def Info: fig4.png  used on input line 287.
-(pdftex.def)             Requested size: 516.0pt x 288.6206pt.
-[5] [6 <./fig3.png (PNG copy)> <./fig4.png (PNG copy)>]
-Underfull \hbox (badness 1371) in paragraph at lines 388--389
+<fig3.png, id=271, 1683.28876pt x 941.5175pt>
+File: fig3.png Graphic file (type png)
+<use fig3.png>
+Package pdftex.def Info: fig3.png  used on input line 285.
+(pdftex.def)             Requested size: 252.0pt x 140.94856pt.
+[5] [6 <./fig4.png (PNG copy)> <./fig3.png (PNG copy)>]
+Underfull \hbox (badness 1371) in paragraph at lines 393--394
 []\OT1/ptm/m/n/8 Android De-vel-op-ers, ``Sen-sor-Man-ager,'' \OT1/ptm/m/it/8 A
 n-droid De-vel-op-ers Doc-u-
  []
@@ -928,22 +928,28 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[7] (./main.aux)
+[7
+
+] (./main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: A03EF0B1FA2F14C34A5A5AA03457C63B;8261.
  )
 Here is how much of TeX's memory you used:
- 22751 strings out of 476106
- 428402 string characters out of 5793933
+ 22753 strings out of 476106
+ 428458 string characters out of 5793933
  1952975 words of memory out of 5000000
- 44272 multiletter control sequences out of 15000+600000
+ 44274 multiletter control sequences out of 15000+600000
  599855 words of font info for 119 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
- 84i,13n,87p,1844b,547s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,13n,87p,1844b,581s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texli
@@ -960,7 +966,7 @@ ve/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/f
 onts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw
 /times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.
 pfb>
-Output written on main.pdf (7 pages, 8025988 bytes).
+Output written on main.pdf (7 pages, 8026308 bytes).
 PDF statistics:
  421 PDF objects out of 1000 (max. 8388607)
  352 compressed objects within 4 object streams

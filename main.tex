@@ -247,12 +247,6 @@ Accelerometer data sampled at 50\,Hz is filtered through a low-pass filter to is
 \subsection{Deterministic Signal Fusion}
 Unlike black-box neural fusion, Boolean fusion (Eq.~\eqref{eq:fusion}) provides strict auditability. An event is triggered if an explicit keyword is spoken OR if an elevated acoustic distress sound coincides with an impact/fall motion anomaly within $\Delta t_{\mathrm{sync}} = 2.0$\,s.
 
-\begin{figure*}[htbp]
-\centering
-\includegraphics[width=\textwidth]{fig3.png}
-\caption{Evaluation framework and multimodal ablation.}
-\label{fig:pipeline}
-\end{figure*}
 
 \section{Incident State Machine and Resilient Offline Escalation}
 
@@ -268,6 +262,13 @@ All state transitions generate immutable audit logs written synchronously to Roo
 \subsection{Cellular SMS Fallback}
 When peer density is zero, SMS fallback formats emergency alerts into compact 160-character GSM payloads containing primary contact alerts, Google Maps location URLs, and short cryptographic hashes.
 
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig4.png}
+\caption{Evaluation framework and multimodal ablation.}
+\label{fig:pipeline}
+\end{figure*}
+
 \section{Tamper-Evident Evidence Vault and Bounded AI Assistance}
 
 \subsection{Evidence Capture and Threat Boundary}
@@ -279,15 +280,19 @@ Per-incident $K_{\mathrm{DEK}}$ keys ensure cryptographic isolation; compromise 
 \subsection{Hashing, Merkle Sealing, and Verification}
 During verification, SheGuard re-computes leaf hashes $H_i$, reconstructs the Merkle tree, checks $R_{\mathrm{Merkle}}$ against the signed manifest, and validates the ECDSA signature against the device public key.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig3.png}
+\caption{Tamper-evident evidence vault and verification.}
+\label{fig:vault}
+\end{figure}
+
 \subsection{Bounded AI Assistance}
 The assistance component interacts with on-device LLM engines (e.g., Gemini Nano) or optional HTTPS APIs only when explicitly invoked by the user during post-incident review.
 
-\begin{figure*}[htbp]
-\centering
-\includegraphics[width=\textwidth]{fig4.png}
-\caption{Tamper-evident evidence vault and verification.}
-\label{fig:vault}
-\end{figure*}
+
+
+
 
 \section{Evaluation and Implementation Verification}
 
