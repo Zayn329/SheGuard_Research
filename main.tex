@@ -6,6 +6,8 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc, shadows}
 \usepackage{array}
 \usepackage{booktabs}
 \usepackage{multirow}
@@ -57,12 +59,154 @@ The key contributions of this paper are summarized as follows:
     \item A prototype implementation on Android 14 accompanied by a rigorous, reproducible evaluation framework.
 \end{itemize}
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=\linewidth]{fig1.png}
-\caption{End-to-end SheGuard system architecture, showing multimodal sensing, rule-based fusion, the incident state machine, offline communication pathways, cryptographic evidence vaulting, and isolated AI assistance.}
+\begin{tikzpicture}[
+    node distance=0.4cm and 0.6cm,
+    font=\sffamily\scriptsize,
+    titlefont/.style={font=\sffamily\bfseries\small, text=blue!80!black},
+    hdr/.style={font=\sffamily\bfseries\tiny, text=gray!90!black, align=left},
+    item/.style={font=\sffamily\tiny, align=left},
+    secbox/.style={draw=blue!60!black, fill=blue!4!white, rounded corners=4pt, thick, inner sep=6pt},
+    offbox/.style={draw=orange!70!black, fill=orange!4!white, rounded corners=4pt, thick, inner sep=6pt},
+    cldbox/.style={draw=teal!70!black, fill=teal!4!white, rounded corners=4pt, thick, inner sep=6pt},
+    aibox/.style={draw=purple!70!black, fill=purple!4!white, rounded corners=4pt, thick, inner sep=6pt},
+    extbox/.style={draw=red!70!black, fill=red!4!white, rounded corners=4pt, thick, inner sep=6pt},
+    nodeblock/.style={draw=black!40, fill=white, rounded corners=2pt, inner sep=4pt, align=left},
+    arr/.style={->, >=stealth, line width=0.9pt, color=blue!80!black},
+    darr/.style={->, >=stealth, line width=0.8pt, dashed, color=gray!70!black},
+    lbl/.style={font=\sffamily\tiny\bfseries, fill=white, inner sep=1.5pt, rounded corners=1pt}
+]
+
+% ------------------- COLUMN 1: ON-DEVICE LAYER -------------------
+\node [nodeblock, text width=4.8cm] (triggers) {
+    \textbf{Trigger Mechanisms}\\
+    \textbullet\ SOS Button (Hardware / UI)\\
+    \textbullet\ Gesture Recognition (Accelerometer)\\
+    \textbullet\ Voice Keyword / Scream Detection
+};
+
+\node [nodeblock, below=0.3cm of triggers, text width=4.8cm] (logic) {
+    \textbf{Local Processing \& Safety Logic}\\
+    \textbullet\ Threat Level Evaluator ($K \lor [A \land M]$)\\
+    \textbullet\ Fallback Trigger Engine
+};
+
+\node [nodeblock, below=0.3cm of logic, text width=4.8cm] (capture) {
+    \textbf{Local Data Capture}\\
+    \textbullet\ GPS Coordinates \& Sensor Logs\\
+    \textbullet\ Audio Recording (Pre-roll Ring Buffer)\\
+    \textbullet\ Camera Feed / Snapshots
+};
+
+\node [nodeblock, below=0.3cm of capture, text width=4.8cm] (crypto) {
+    \textbf{Local Storage \& Cryptography}\\
+    \textbullet\ AES-256-GCM Payload Encryption\\
+    \textbullet\ SHA-256 Hash \& Merkle Tree Sealing\\
+    \textbullet\ Keystore-Backed Local Encrypted Vault
+};
+
+\begin{pgfonlayer}{background}
+\node [secbox, fit={(triggers) (logic) (capture) (crypto)}, label={[titlefont, anchor=north west]north west:\textbf{1. User / On-Device Layer (Mobile / Hardware)}}] (layer1) {};
+\end{pgfonlayer}
+
+% ------------------- COLUMN 2: COMM & CLOUD LAYERS -------------------
+% Top: Offline Comm Layer
+\node [nodeblock, right=1.0cm of triggers, text width=4.8cm] (direct) {
+    \textbf{Direct Channels}\\
+    \textbullet\ SMS Dispatcher (Encrypted Payload)\\
+    \textbullet\ Direct Emergency Call Routing
+};
+
+\node [nodeblock, below=0.3cm of direct, text width=4.8cm] (mesh) {
+    \textbf{Mesh / Peer-to-Peer Network}\\
+    \textbullet\ BLE / Wi-Fi Direct Relay\\
+    \textbullet\ Multi-hop Nearby Connections
+};
+
+\begin{pgfonlayer}{background}
+\node [offbox, fit={(direct) (mesh)}, label={[font=\sffamily\bfseries\small, text=orange!90!black, anchor=north west]north west:\textbf{2. Offline-First Communication Layer}}] (layer2) {};
+\end{pgfonlayer}
+
+% Bottom: Cloud Infrastructure Layer
+\node [nodeblock, below=1.0cm of layer2, text width=4.8cm] (apigw) {
+    \textbf{API Gateway / Ingestion Layer}\\
+    \textbullet\ Asynchronous Incident Upload
+};
+
+\node [nodeblock, below=0.25cm of apigw, text width=4.8cm] (cloudstore) {
+    \textbf{Cloud Encrypted Storage}\\
+    \textbullet\ WORM / Evidence Vault (S3 / Blob)
+};
+
+\node [nodeblock, below=0.25cm of cloudstore, text width=4.8cm] (notif) {
+    \textbf{Notification \& Alert Service}\\
+    \textbullet\ Push Notifications\\
+    \textbullet\ Service Dispatch API
+};
+
+\begin{pgfonlayer}{background}
+\node [cldbox, fit={(apigw) (cloudstore) (notif)}, label={[font=\sffamily\bfseries\small, text=teal!90!black, anchor=north west]north west:\textbf{3. Backend \& Cloud Infrastructure (Optional)}}] (layer3) {};
+\end{pgfonlayer}
+
+% ------------------- COLUMN 3: STAKEHOLDERS & AI ASSIST -------------------
+% Top Right: External Entities
+\node [nodeblock, right=1.0cm of direct, text width=4.6cm] (contacts) {
+    \textbf{Emergency Contacts / Guardians}\\
+    \textbullet\ Nominated Personal Contacts
+};
+
+\node [nodeblock, below=0.3cm of contacts, text width=4.6cm] (responders) {
+    \textbf{First Responders \& Authorities}\\
+    \textbullet\ Police / Medical Services
+};
+
+\begin{pgfonlayer}{background}
+\node [extbox, fit={(contacts) (responders)}, label={[font=\sffamily\bfseries\small, text=red!90!black, anchor=north west]north west:\textbf{5. External Stakeholders}}] (layer5) {};
+\end{pgfonlayer}
+
+% Bottom Right: Post-Incident AI
+\node [nodeblock, right=1.0cm of cloudstore, text width=4.6cm] (llm) {
+    \textbf{Post-Incident Analyzer}\\
+    \textbullet\ LLM / RAG Summarization Engine\\
+    \textbullet\ Legal / Medical Aid Recommendation
+};
+
+\node [nodeblock, below=0.3cm of llm, text width=4.6cm] (hitl) {
+    \textbf{Human-in-the-Loop Dashboard}\\
+    \textbullet\ Responder / Authority Review\\
+    \textbullet\ FIR Draft Verification
+};
+
+\begin{pgfonlayer}{background}
+\node [aibox, fit={(llm) (hitl)}, label={[font=\sffamily\bfseries\small, text=purple!90!black, anchor=north west]north west:\textbf{4. Post-Incident AI Assistance}}] (layer4) {};
+\end{pgfonlayer}
+
+% ------------------- ARROWS & FLOWS -------------------
+% On-Device -> Offline Comm
+\draw [arr] (layer1.east |- direct.west) -- (layer2.west |- direct.west) node[midway, lbl, above] {Trigger};
+\draw [arr] (layer1.east |- mesh.west) -- (layer2.west |- mesh.west) node[midway, lbl, above] {P2P Payload};
+
+% On-Device -> Cloud
+\draw [darr] (crypto.east) -- ++(0.4,0) |- (apigw.west) node[near start, lbl, above, rotate=90] {Async Sync};
+
+% Offline Comm -> External Entities
+\draw [arr] (direct.east) -- (contacts.west) node[midway, lbl, above] {SMS / Calls};
+\draw [arr] (mesh.east) -- (responders.west |- mesh.east) node[midway, lbl, above] {Relay Alerts};
+
+% Cloud -> External Entities
+\draw [arr] (notif.north) -- (layer5.south |- notif.north) node[midway, lbl, right] {Push / Dispatch};
+
+% Cloud Storage -> AI Assistance
+\draw [arr] (cloudstore.east) -- (llm.west) node[midway, lbl, above] {Evidence Feed};
+
+% AI Assistance -> External Entities / Authorities
+\draw [arr] (hitl.north) -- (responders.south |- hitl.north) node[midway, lbl, right] {Verified FIR};
+
+\end{tikzpicture}
+\caption{System architecture of SheGuard, showing the separation between on-device safety-critical processing, offline-first communication, cryptographically protected evidence preservation, optional backend services, and human-reviewed post-incident AI assistance.}
 \label{fig:arch}
-\end{figure}
+\end{figure*}
 
 \section{Related Work and System-Level Gaps}
 Personal safety systems have evolved across wearable hardware, cloud-connected mobile applications, and specialized acoustic monitor networks. However, architectural gaps persist when comparing existing solutions against real-world operational constraints.
