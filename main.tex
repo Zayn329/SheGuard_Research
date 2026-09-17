@@ -11,7 +11,6 @@
 \usepackage{array}
 \usepackage{booktabs}
 \usepackage{multirow}
-\usepackage{tabularx}
 \usepackage{url}
 \usepackage{hyperref}
 
@@ -100,7 +99,7 @@ The key contributions of this paper are summarized as follows:
 \begin{figure*}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig1.png}
-\caption{Complete SheGuard system architecture.}
+\caption{System architecture of SheGuard, showing the separation between on-device safety-critical processing, offline-first communication, cryptographically protected evidence preservation, optional backend services, and human-reviewed post-incident AI assistance.}
 \label{fig:arch}
 \end{figure*}
 
@@ -129,8 +128,7 @@ As highlighted in Table~\ref{tab:comp}, no existing personal safety framework un
 \caption{Comparison of Personal Safety Architectures and SheGuard}
 \label{tab:comp}
 \centering
-\small
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\begin{tabular}{p{2.2cm}p{2.8cm}p{2.8cm}p{2.8cm}p{2.8cm}p{2.5cm}}
 \toprule
 \textbf{Architecture / System} & \textbf{Sensing Modality} & \textbf{Network Dependency} & \textbf{Fusion Strategy} & \textbf{Evidence Integrity} & \textbf{LLM / AI Layer} \\
 \midrule
@@ -139,7 +137,7 @@ Single-Channel Audio & Scream or Keyword & Cloud API & Single Model Threshold & 
 Wearable Fall Detectors & Accelerometer / Gyro & Paired Phone Cellular & Heuristic Rule & Local Database & None \\
 \textbf{SheGuard (This Work)} & \textbf{Multimodal} (Acoustic + Keyword + Motion) & \textbf{Layered Offline} (BLE/Wi-Fi Direct P2P + Direct SMS) & \textbf{Deterministic Boolean Fusion} ($K \lor [A \land M]$) + State Machine & \textbf{Cryptographic} (AES-256-GCM, Keystore, SHA-256 Merkle Tree) & \textbf{Bounded LLM} (Strict Human-in-the-Loop FIR/Timeline) \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table*}
 
 \section{System Architecture and Operational Boundaries}
@@ -177,29 +175,28 @@ Transitions between operational states are managed by an auditable state machine
 \caption{Incident State Machine Transitions}
 \label{tab:states}
 \centering
-\small
-\begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.3cm}@{}}
+\begin{tabular}{lll}
 \toprule
 \textbf{Current State} & \textbf{Event / Condition} & \textbf{Next State} \\
 \midrule
 \texttt{IDLE} & Safety Monitoring Start & \texttt{MONITORING} \\
-\texttt{MONITORING} & Single Anomaly Detected & \texttt{SUSPICIOUS\_}\allowbreak\texttt{SIGNAL} \\
-\texttt{SUSPICIOUS\_}\allowbreak\texttt{SIGNAL} & Fusion Rule~\eqref{eq:fusion} Satisfied & \texttt{CANDIDATE\_}\allowbreak\texttt{INCIDENT} \\
-\texttt{CANDIDATE\_}\allowbreak\texttt{INCIDENT} & State Machine Evaluation & \texttt{PENDING\_}\allowbreak\texttt{CONFIRMATION} \\
-\texttt{PENDING\_}\allowbreak\texttt{CONFIRMATION} & User Cancel (Valid PIN) & \texttt{CANCELLED} \\
-\texttt{PENDING\_}\allowbreak\texttt{CONFIRMATION} & 6-Second Timeout Expired & \texttt{ACTIVE\_}\allowbreak\texttt{INCIDENT} \\
-\texttt{ACTIVE\_}\allowbreak\texttt{INCIDENT} & P2P / SMS Escalation & \texttt{ESCALATED} \\
-\texttt{ESCALATED} & Evidence Sealing Complete & \texttt{RESOLVED\_}\allowbreak\texttt{SEALED} \\
+\texttt{MONITORING} & Single Anomaly Detected & \texttt{SUSPICIOUS\_SIGNAL} \\
+\texttt{SUSPICIOUS\_SIGNAL} & Fusion Rule~\eqref{eq:fusion} Satisfied & \texttt{CANDIDATE\_INCIDENT} \\
+\texttt{CANDIDATE\_INCIDENT} & State Machine Evaluation & \texttt{PENDING\_CONFIRMATION} \\
+\texttt{PENDING\_CONFIRMATION} & User Cancel (Valid PIN) & \texttt{CANCELLED} \\
+\texttt{PENDING\_CONFIRMATION} & 6-Second Timeout Expired & \texttt{ACTIVE\_INCIDENT} \\
+\texttt{ACTIVE\_INCIDENT} & P2P / SMS Escalation & \texttt{ESCALATED} \\
+\texttt{ESCALATED} & Evidence Sealing Complete & \texttt{RESOLVED\_SEALED} \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
 
-\begin{figure*}[htbp]
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{fig2.png}
-\caption{Incident lifecycle, state machine, and resilient escalation.}
+\includegraphics[width=\linewidth]{fig2.png}
+\caption{Incident state machine lifecycle transitions, highlighting the 6-second bounded confirmation countdown and automatic default-to-escalate semantics.}
 \label{fig:statemachine}
-\end{figure*}
+\end{figure}
 
 \subsection{Offline Communication and Relay Protocol}
 When an incident enters \texttt{ACTIVE\_INCIDENT}, SheGuard initializes two-tier offline escalation:
@@ -247,6 +244,12 @@ Accelerometer data sampled at 50\,Hz is filtered through a low-pass filter to is
 \subsection{Deterministic Signal Fusion}
 Unlike black-box neural fusion, Boolean fusion (Eq.~\eqref{eq:fusion}) provides strict auditability. An event is triggered if an explicit keyword is spoken OR if an elevated acoustic distress sound coincides with an impact/fall motion anomaly within $\Delta t_{\mathrm{sync}} = 2.0$\,s.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig3.png}
+\caption{Multimodal signal processing pipeline demonstrating synchronized acoustic spectrogram evaluation and accelerometer impact detection.}
+\label{fig:pipeline}
+\end{figure}
 
 \section{Incident State Machine and Resilient Offline Escalation}
 
@@ -262,13 +265,6 @@ All state transitions generate immutable audit logs written synchronously to Roo
 \subsection{Cellular SMS Fallback}
 When peer density is zero, SMS fallback formats emergency alerts into compact 160-character GSM payloads containing primary contact alerts, Google Maps location URLs, and short cryptographic hashes.
 
-\begin{figure*}[htbp]
-\centering
-\includegraphics[width=\textwidth]{fig4.png}
-\caption{Evaluation framework and multimodal ablation.}
-\label{fig:pipeline}
-\end{figure*}
-
 \section{Tamper-Evident Evidence Vault and Bounded AI Assistance}
 
 \subsection{Evidence Capture and Threat Boundary}
@@ -280,19 +276,15 @@ Per-incident $K_{\mathrm{DEK}}$ keys ensure cryptographic isolation; compromise 
 \subsection{Hashing, Merkle Sealing, and Verification}
 During verification, SheGuard re-computes leaf hashes $H_i$, reconstructs the Merkle tree, checks $R_{\mathrm{Merkle}}$ against the signed manifest, and validates the ECDSA signature against the device public key.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{fig3.png}
-\caption{Tamper-evident evidence vault and verification.}
-\label{fig:vault}
-\end{figure}
-
 \subsection{Bounded AI Assistance}
 The assistance component interacts with on-device LLM engines (e.g., Gemini Nano) or optional HTTPS APIs only when explicitly invoked by the user during post-incident review.
 
-
-
-
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig4.png}
+\caption{Tamper-evident evidence vault structure showing AES-256-GCM chunk encryption, Merkle tree root hashing, and Keystore ECDSA manifest signing.}
+\label{fig:vault}
+\end{figure}
 
 \section{Evaluation and Implementation Verification}
 
@@ -303,8 +295,7 @@ The SheGuard prototype implementation on Android 14 was verified through compreh
 \caption{Implementation Verification Results}
 \label{tab:verification}
 \centering
-\small
-\begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}p{2.1cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{1.4cm}@{}}
+\begin{tabular}{p{2.3cm}p{3.2cm}l}
 \toprule
 \textbf{Subsystem} & \textbf{Verification Target} & \textbf{Outcome} \\
 \midrule
@@ -320,7 +311,7 @@ Merkle Integrity & Hash tree generation \& tamper detection & Verified \\
 Manifest Signing & ECDSA signature generation / check & Verified \\
 AI Assistance & FIR drafting with mandatory disclaimer & Verified \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 \subsection{Resource Measurements}
@@ -333,8 +324,7 @@ To quantify the individual contribution of each sensing modality, an analytical 
 \caption{Multimodal Sensing Ablation Study Configurations}
 \label{tab:ablation}
 \centering
-\small
-\begin{tabularx}{\columnwidth}{@{}>{\centering\arraybackslash}p{1.1cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\begin{tabular}{c>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}p{2.9cm}}
 \toprule
 \textbf{Config} & \textbf{Enabled Decision Inputs} & \textbf{Evaluation Focus} \\
 \midrule
@@ -345,14 +335,11 @@ D & Unsynchronized Acoustic + Motion & Unaligned signal false alarm rate \\
 E & Synchronized Acoustic + Motion ($\Delta t_{\mathrm{sync}}$) & Coincident event precision \\
 \textbf{F} & \textbf{Complete SheGuard} ($K \lor [A \land M]$) & \textbf{Full system accuracy \& resilience} \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 \section{Conclusion}
 This paper presented SheGuard, an offline-first mobile safety companion architecture integrating multimodal acoustic, keyword, and motion sensing with auditable deterministic fusion. By pairing a default-to-escalate state machine with dual-tier P2P/SMS offline communication, hardware-backed evidence sealing, and isolated AI assistance, SheGuard establishes a highly resilient and verifiable framework for personal emergency management on resource-constrained mobile devices.
-
-\section*{Acknowledgment}
-The authors would like to thank the Department of Computer Engineering at Anjuman-I-Islam's Kalsekar Technical Campus (AIKTC) for supporting this research.
 
 \begin{thebibliography}{99}
 
