@@ -99,7 +99,7 @@ The key contributions of this paper are summarized as follows:
 \begin{figure*}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig1.png}
-\caption{System architecture of SheGuard, showing the separation between on-device safety-critical processing, offline-first communication, cryptographically protected evidence preservation, optional backend services, and human-reviewed post-incident AI assistance.}
+\caption{Complete SheGuard system architecture.}
 \label{fig:arch}
 \end{figure*}
 
@@ -191,12 +191,12 @@ Transitions between operational states are managed by an auditable state machine
 \end{tabular}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=\linewidth]{fig2.png}
-\caption{Incident state machine lifecycle transitions, highlighting the 6-second bounded confirmation countdown and automatic default-to-escalate semantics.}
+\includegraphics[width=\textwidth]{fig2.png}
+\caption{Incident lifecycle, state machine, and resilient escalation.}
 \label{fig:statemachine}
-\end{figure}
+\end{figure*}
 
 \subsection{Offline Communication and Relay Protocol}
 When an incident enters \texttt{ACTIVE\_INCIDENT}, SheGuard initializes two-tier offline escalation:
@@ -244,12 +244,12 @@ Accelerometer data sampled at 50\,Hz is filtered through a low-pass filter to is
 \subsection{Deterministic Signal Fusion}
 Unlike black-box neural fusion, Boolean fusion (Eq.~\eqref{eq:fusion}) provides strict auditability. An event is triggered if an explicit keyword is spoken OR if an elevated acoustic distress sound coincides with an impact/fall motion anomaly within $\Delta t_{\mathrm{sync}} = 2.0$\,s.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=\linewidth]{fig3.png}
-\caption{Multimodal signal processing pipeline demonstrating synchronized acoustic spectrogram evaluation and accelerometer impact detection.}
+\includegraphics[width=\textwidth]{fig3.png}
+\caption{Evaluation framework and multimodal ablation.}
 \label{fig:pipeline}
-\end{figure}
+\end{figure*}
 
 \section{Incident State Machine and Resilient Offline Escalation}
 
@@ -279,12 +279,12 @@ During verification, SheGuard re-computes leaf hashes $H_i$, reconstructs the Me
 \subsection{Bounded AI Assistance}
 The assistance component interacts with on-device LLM engines (e.g., Gemini Nano) or optional HTTPS APIs only when explicitly invoked by the user during post-incident review.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=\linewidth]{fig4.png}
-\caption{Tamper-evident evidence vault structure showing AES-256-GCM chunk encryption, Merkle tree root hashing, and Keystore ECDSA manifest signing.}
+\includegraphics[width=\textwidth]{fig4.png}
+\caption{Tamper-evident evidence vault and verification.}
 \label{fig:vault}
-\end{figure}
+\end{figure*}
 
 \section{Evaluation and Implementation Verification}
 
